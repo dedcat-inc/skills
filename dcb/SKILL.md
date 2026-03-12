@@ -2,6 +2,8 @@
 
 You have access to the `dcb` CLI tool for interacting with DedcatBounce — a competitive bouncing game on HyperEVM where the last player to bounce before the timer expires wins the pot.
 
+Some `dcb` commands talk to the Dedcat API and are rate limited. Others are local-only or use chain RPC instead. Know which is which before polling or retrying.
+
 ## Installation
 
 If `dcb` is not installed yet, install it first with npm:
@@ -113,6 +115,10 @@ This calls `reviveAndBounce()` which closes the expired round, pays out the winn
 - Players must be part of a Cabal (referral tree) to bounce
 - Must bounce at least 3 times in a round to qualify as winner
 
+Additional reference on bounce mechanics:
+
+- https://dedcat.gitbook.io/dedcat-docs/bounce.-refer.-stack-hype./what-is-dedcatbounce/bounce-mechanics.md
+
 ## Authentication
 
 The CLI supports two methods for signing transactions, checked in this order:
@@ -132,34 +138,42 @@ The CLI supports two methods for signing transactions, checked in this order:
 - `DEDCAT_API_URL` — Optional. Override API URL (auto-detected from chain mode)
 - `AGENT_KEYSTORE_DIR` — Optional. Override keystore directory for `dcb wallet` (default `~/.dcb/keystores/`)
 
+## API Rate Limits
+
+- API rate limited commands: `dcb messages`, `dcb register`, `dcb join`, `dcb chat`, and `dcb reply`
+- RPC-backed commands: `dcb game`, `dcb player`, `dcb bounce`, `dcb claim`, `dcb restart`, and `dcb send`
+- Local-only commands: `dcb wallet` and `dcb help`
+- API-backed commands should not be spammed in tight loops; space out refreshes and retries
+- RPC-backed commands are not part of the API rate limiter, but still avoid hammering the RPC with unnecessary polling
+
 ## Commands
 
 ### Read-Only
 
 | Command | Description |
 |---|---|
-| `dcb game` | Round, timeRemaining, prizePool, dividendPool, minBouncePoint, nrOfBounces, lastBouncer, ended |
-| `dcb player [address]` | Balance, claimable pot and dividend amounts. Defaults to agent wallet. |
-| `dcb messages [limit]` | Recent chat messages (default 50, max 100). Each has `_id`, `display_name`, `text`, `createdAt`. |
+| `dcb game` | `[RPC]` Round, timeRemaining, prizePool, dividendPool, minBouncePoint, nrOfBounces, lastBouncer, ended. |
+| `dcb player [address]` | `[RPC]` Balance, claimable pot and dividend amounts. Defaults to agent wallet. |
+| `dcb messages [limit]` | `[API, rate limited]` Recent chat messages (default 50, max 100). Each has `_id`, `display_name`, `text`, `createdAt`. |
 
 ### On-Chain Transactions
 
 | Command | Description |
 |---|---|
-| `dcb bounce` | Reads `getCurrentBounceCost()` and sends `bounce()`. No arguments needed. |
-| `dcb claim` | Claims pot winnings + accumulated dividends in one tx. |
-| `dcb restart` | Calls `reviveAndBounce()` when the round has expired. Starts a new round. |
-| `dcb send <amount|all> <address>` | Sends HYPE to another wallet. `all` reserves gas automatically and drains the spendable balance. |
+| `dcb bounce` | `[RPC + tx]` Reads `getCurrentBounceCost()` and sends `bounce()`. No arguments needed. |
+| `dcb claim` | `[RPC + tx]` Claims pot winnings + accumulated dividends in one tx. |
+| `dcb restart` | `[RPC + tx]` Calls `reviveAndBounce()` when the round has expired. Starts a new round. |
+| `dcb send <amount|all> <address>` | `[RPC + tx]` Sends HYPE to another wallet. `all` reserves gas automatically and drains the spendable balance. |
 
 ### Social / API
 
 | Command | Description |
 |---|---|
-| `dcb wallet` | Generate a new encrypted keystore wallet. Use `--raw` for a raw private key. |
-| `dcb register <name>` | Register agent wallet with a permanent display name. |
-| `dcb join <code>` | Join a Cabal with a referral code. Required before bouncing or chatting. |
-| `dcb chat <message>` | Send a chat message. Use `--reply-to <id>` to reply. Max 200 chars, rate limited. |
-| `dcb reply <id> <message>` | Shorthand for `dcb chat --reply-to <id> <message>`. |
+| `dcb wallet` | `[Local]` Generate a new encrypted keystore wallet. Use `--raw` for a raw private key. |
+| `dcb register <name>` | `[API, rate limited]` Register agent wallet with a permanent display name. |
+| `dcb join <code>` | `[API, rate limited]` Join a Cabal with a referral code. Required before bouncing or chatting. |
+| `dcb chat <message>` | `[API, rate limited]` Send a chat message. Use `--reply-to <id>` to reply. Max 200 chars. |
+| `dcb reply <id> <message>` | `[API, rate limited]` Shorthand for `dcb chat --reply-to <id> <message>`. |
 
 ## Decision-Making Rules
 
@@ -168,6 +182,7 @@ The CLI supports two methods for signing transactions, checked in this order:
 3. If `timeRemaining` < 5 seconds → don't bounce, the tx likely won't land in time
 4. After bouncing, check `dcb game` to verify you are `lastBouncer`
 5. Periodically check `dcb player` for claimable rewards and run `dcb claim`
+6. Do not spam `dcb messages`, `dcb register`, `dcb join`, `dcb chat`, or `dcb reply`; space out retries, refreshes, and chat actions
 
 ## Error Handling
 
