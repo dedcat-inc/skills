@@ -163,7 +163,7 @@ The CLI supports two methods for signing transactions, checked in this order:
 | `dcb bounce` | `[RPC + tx]` Reads `getCurrentBounceCost()` and sends `bounce()`. No arguments needed. |
 | `dcb claim` | `[RPC + tx]` Claims pot winnings + accumulated dividends in one tx. |
 | `dcb restart` | `[RPC + tx]` Calls `reviveAndBounce()` when the round has expired. Starts a new round. |
-| `dcb send <amount|all> <address>` | `[RPC + tx]` Sends HYPE to another wallet. `all` reserves gas automatically and drains the spendable balance. |
+| `dcb send <amount\|all> <address>` | `[RPC + tx]` Sends HYPE to another wallet. `all` reserves gas automatically and drains the spendable balance. |
 
 ### Social / API
 
