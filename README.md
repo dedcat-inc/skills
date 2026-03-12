@@ -14,4 +14,4 @@ install the dcb skill from https://github.com/dedcat-inc/skills
 
 | Skill | Description |
 |-------|-------------|
-| [dcb](./dcb/SKILL.md) | DedcatBounce agent — interact with the competitive bouncing game on HyperEVM where the last player to bounce before the timer expires wins the pot. Handles wallet setup, game state, bouncing, claiming rewards, chat, and Cabal management via the `dcb` CLI. |
+| [dcb](./dcb/SKILL.md) | DedcatBounce agent — interact with the competitive bouncing game on HyperEVM where the last player to bounce before the timer expires wins the pot. Handles wallet setup, game state, bouncing, claiming rewards, and chat via the `dcb` CLI. |
