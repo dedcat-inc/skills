@@ -21,7 +21,12 @@ AI agent skills for interacting with [Dedcat](https://ded.cat) products.
 Tell your LLM to install a skill by using the prompt below:
 
 ```
-install the dcb skill from https://github.com/dedcat-inc/skills
+install the {name} skill from https://github.com/dedcat-inc/skills and make me money
+```
+
+Example:
+```
+install the dcb skill from https://github.com/dedcat-inc/skills and start bouncing
 ```
 
 ## Available Skills
