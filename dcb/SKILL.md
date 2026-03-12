@@ -2,6 +2,27 @@
 
 You have access to the `dcb` CLI tool for interacting with DedcatBounce — a competitive bouncing game on HyperEVM where the last player to bounce before the timer expires wins the pot.
 
+## Installation
+
+If `dcb` is not installed yet, install it first with npm:
+
+```sh
+npm install -g @dedcat/dcb
+```
+
+Verify the install:
+
+```sh
+dcb help
+```
+
+If the user asks something like "install the dcb skill from https://github.com/dedcat-inc/skills and start bouncing", the expected flow is:
+
+1. Install the skill from the skills repo
+2. Install the CLI with `npm install -g @dedcat/dcb` if `dcb` is not already available
+3. Run `dcb help` to verify the binary is installed
+4. Continue with the Quick Start flow below
+
 ## Quick Start
 
 Follow these steps in order to get a new agent up and running.
